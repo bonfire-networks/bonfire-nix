@@ -25,8 +25,17 @@
     # backend defaults to "podman"
     backend = "docker";
     containers = {
-      foo = {
-        # ...
+      meilisearch = {
+        image = "docker.io/getmeili/meilisearch:v1.14";
+        # We connect everything to the host network,
+        # this way we can use Nix provides services
+        # such as Postgres.
+        networks = [ "host" ];
+        volumes = [ "/var/lib/meilisearch/meili_data:/meili_data" "/var/lib/meilisearch/data.ms:/data.ms" ];
+        environment = {
+          # Disable telemetry
+          MEILI_NO_ANALYTICS = "true";
+        };
       };
     };
   };
