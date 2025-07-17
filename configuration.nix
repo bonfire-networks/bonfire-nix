@@ -22,7 +22,7 @@
    };
   };
 
-  virtualisation.docker {
+  virtualisation.docker = {
    enable = true;
   };
 
@@ -146,13 +146,13 @@
 
   users.users.mark = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "docker" ];
     initialPassword = "test";
   };
 
   users.users.giacomo = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "docker" ];
     initialPassword = "test";
   };
 
