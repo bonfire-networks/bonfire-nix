@@ -8,7 +8,7 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, bonfire-app, flake-utils ... }@inputs: {
+  outputs = { self, nixpkgs, bonfire-app, flake-utils, ... }@inputs: {
     {
       nixosConfigurations.nixos-vm = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
