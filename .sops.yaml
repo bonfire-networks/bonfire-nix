@@ -1,0 +1,10 @@
+keys:
+    - &user_giacomo age1jx6kggqg45m8z6pyx3pnunn8y886rqcum0w47uvnecpqdp5599jq3ktn92
+    - &host_hetzner age1vwzk69t8zc0s5m4cm4fnxvv9fj3gfrzv3vn9hzlvgmuakrffvswqxdnhk6
+
+creation_rules:
+    - path_regex: .*hetzner\.yaml$
+      key_groups:
+          - age:
+                - *user_giacomo
+                - *host_hetzner
