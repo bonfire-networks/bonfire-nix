@@ -1,3 +1,26 @@
+# 🚀 One-Click NixOS Install on Hetzner Cloud
+
+## Quick Start (for Beginners)
+
+1. **Create a Hetzner Cloud server**
+   - Choose Ubuntu or Debian as the OS (default is fine).
+   - Note the server's IP address and root password (from Hetzner dashboard).
+
+2. **On your Mac or Linux computer:**
+   - Open Terminal.
+   - Download and run the install script:
+     ```sh
+     curl -L https://raw.githubusercontent.com/youruser/yourrepo/main/install-hetzner.sh -o install-hetzner.sh
+     chmod +x install-hetzner.sh
+     ./install-hetzner.sh <SERVER_IP> <ROOT_PASSWORD>
+     ```
+     Replace `<SERVER_IP>` and `<ROOT_PASSWORD>` with your server's details.
+
+3. **Wait for the script to finish.**
+   - Your server will reboot into NixOS automatically!
+
+---
+
 # `bonfire-nix`
 
 A Nix flake providing NixOS modules for [Bonfire](https://bonfirenetworks.org/) provisioning.

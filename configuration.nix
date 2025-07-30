@@ -1,10 +1,6 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
-  imports =
-    [
-    ./hardware-configuration.nix
-    ];
 
   nix.settings.experimental-features =["nix-command" "flakes"];
 
@@ -12,13 +8,12 @@
 
   boot = {
    kernelPackages = pkgs.linuxPackages_6_1;
-   supportedFilesystems = [ "btrfs"];
+   supportedFilesystems = [ "btrfs" "ext4" ];
 
    loader.grub = {
     enable = true;
     version = 2;
     forceInstall = true;
-    device = "/dev/sda";
    };
   };
 
@@ -182,4 +177,9 @@
   users.groups.bonfire = {};
 
   system.stateVersion = "23.11";
+
+  fileSystems."/" = {
+    device = lib.mkForce "/dev/mapper/pool-root";
+    fsType = "ext4";
+  };
 }
