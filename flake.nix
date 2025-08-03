@@ -7,9 +7,11 @@
   };
 
   outputs = { self, nixpkgs, ... }@inputs: {
-    # Nixos module, consumed by other flakes
-    nixosModules."bonfire" = { config }: { options = {}; config = {}; };
-    # Default module
-    nixosModules.default = "bonfire";
+    nixosModules = {
+      # Nixos module, consumed by other flakes
+      bonfire = ./modules/bonfire;
+      # Default module
+      default = self.nixosModules.bonfire;
+    };
    };
 }
