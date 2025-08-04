@@ -122,7 +122,7 @@
     vim
   ];
 
-  services.openssh = {
+  services.openssh.settings = {
     enable = true;
     permitRootLogin = "yes";
     passwordAuthentication = false;
