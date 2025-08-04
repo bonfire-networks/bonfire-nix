@@ -181,4 +181,9 @@
   users.groups.bonfire = {};
 
   system.stateVersion = "23.11";
+
+  fileSystems."/" = {
+    device = lib.mkForce "/dev/mapper/pool-root";
+    fsType = "ext4";
+  };
 }
