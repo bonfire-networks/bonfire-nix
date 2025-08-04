@@ -1,6 +1,11 @@
 { config, pkgs, lib, ... }:
 
 {
+   imports =
+    [
+      ./hardware-configuration.nix
+      ./disko-config.nix
+    ];
 
   nix.settings.experimental-features =["nix-command" "flakes"];
 
@@ -177,9 +182,4 @@
   users.groups.bonfire = {};
 
   system.stateVersion = "23.11";
-
-  fileSystems."/" = {
-    device = lib.mkForce "/dev/mapper/pool-root";
-    fsType = "ext4";
-  };
 }
