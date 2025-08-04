@@ -17,7 +17,6 @@
       modules = [
         ./configuration.nix
         disko.nixosModules.disko
-        ./disko.nix
         sops-nix.nixosModules.sops
       ];
       specialArgs = {
