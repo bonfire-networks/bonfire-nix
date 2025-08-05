@@ -104,7 +104,7 @@
 
   firewall = {
    enable = true;
-   allowedTCPPorts =[];
+   allowedTCPPorts = [ 22 ];
    allowedUDPPorts =[];
    };
   };
@@ -122,10 +122,11 @@
     vim
   ];
 
+  # Enable OpenSSH server and set SSHD options
+  services.openssh.enable = true;
   services.openssh.settings = {
-    enable = true;
-    permitRootLogin = "yes";
-    passwordAuthentication = false;
+    PermitRootLogin = "yes";
+    PasswordAuthentication = false;
   };
 
   services.fail2ban.enable = true;
