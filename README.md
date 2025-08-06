@@ -8,8 +8,7 @@
 
 2. **On your Mac or Linux computer:**
    - Open Terminal
-   - Generate age keys
-   - Run `nix run --extra-experimental-features 'nix-command flakes' github:nix-community/nixos-anywhere -- --extra-files ~/.age/keys.txt:/root/.config/sops/age/keys.txt --flake ~/Desktop/Code/bonfire-nix#nixos-vm --target-host root@<Hetzner Cloud IP address> --build-on-remote`
+   - Run `nix run --extra-experimental-features 'nix-command flakes' github:nix-community/nixos-anywhere -- --flake ~/Desktop/Code/bonfire-nix#nixos-vm --target-host root@<Hetzner Cloud IP address> --build-on-remote`
 
 ---
 
