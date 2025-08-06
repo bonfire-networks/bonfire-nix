@@ -1,14 +1,16 @@
-# 🚀 One-Click NixOS Install on Hetzner Cloud
+# 🚀 Bonfire on NixOS install on Hetzner Cloud
 
-## Quick Start (for Beginners)
+## Quick Start
 
 1. **Create a Hetzner Cloud server**
-   - Choose Ubuntu or Debian as the OS (default is fine) and configure IPv4.
+   - Choose Ubuntu or Debian as the OS (default is fine) and configure IPv4
+   - Configure SSH key login as part of setup
    - Note the server's IP address from the Hetzner dashboard
 
 2. **On your Mac or Linux computer:**
+   - Clone repo
    - Open Terminal
-   - Run `nix run --extra-experimental-features 'nix-command flakes' github:nix-community/nixos-anywhere -- --flake ~/Desktop/Code/bonfire-nix#nixos-vm --target-host root@<Hetzner Cloud IP address> --build-on-remote`
+   - Run `nix run --extra-experimental-features 'nix-command flakes' github:nix-community/nixos-anywhere -- --flake <path to flake.nix>#nixos-vm --target-host root@<Hetzner Cloud IP address> --build-on-remote`
 
 ---
 
