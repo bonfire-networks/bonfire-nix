@@ -189,6 +189,7 @@ in {
     # Secrets
     secret-key-base = mkOption {
       type = lib.types.path;
+      default = "/run/secrets/bonfire/secret_key_base";
       defaultText = "/run/secrets/bonfire/secret_key_base";
       description = ''
          SECRET_KEY_BASE Bonfire secret file path.
@@ -196,6 +197,7 @@ in {
     };
     signing-salt = mkOption {
       type = lib.types.path;
+      default = "/run/secrets/bonfire/signing_salt";
       defaultText = "/run/secrets/bonfire/signing_salt";
       description = ''
         SIGNING_SALT Bonfire secret file path.
@@ -203,6 +205,7 @@ in {
     };
     encryption-salt = mkOption {
       type = lib.types.path;
+      default = "/run/secrets/bonfire/encryption_salt";
       defaultText = "/run/secrets/bonfire/encryption_salt";
       description = ''
         ENCRYPTION_SALT Bonfire secret file path.
