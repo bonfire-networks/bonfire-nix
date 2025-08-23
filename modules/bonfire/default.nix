@@ -284,7 +284,7 @@ in {
           (if cfg.mail-password != null then [ "${cfg.mail-password}:${cfg.mail-password}:ro" ] else []) ++
           (if cfg.mail-private-key != null then [ "${cfg.mail-private-key}:${cfg.mail-private-key}:ro" ] else []);
           entrypoint = "/bin/sh";
-          cmd = [ "${
+          cmd = [ "-c" "${
                     if cfg.mail-private-key != null then "export MAIL_PRIVATE_KEY=\"$(cat ${cfg.mail-private-key})\"; " else ""
                     } ${
                     if cfg.mail-password != null then "export MAIL_PASSWORD=\"$(cat ${cfg.mail-password})\"; " else ""
