@@ -303,7 +303,7 @@ in {
           (if cfg.mail-backend != null then { MAIL_BACKEND = "${cfg.mail-backend}"; } else {}) //
           (if cfg.mail-key != null then { MAIL_KEY = "${cfg.mail-key}"; } else {}) //
           (if cfg.mail-port != null then { MAIL_PORT = "${cfg.mail-port}"; } else {}) //
-          (if cfg.mail-ssl != null then { MAIL_SSL = "${cfg.mail-ssl}"; } else {});
+          (if cfg.mail-ssl != null then { MAIL_SSL = "${lib.trivial.boolToString cfg.mail-ssl}"; } else {});
         };
 
         meilisearch = {
