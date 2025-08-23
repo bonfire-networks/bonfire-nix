@@ -288,7 +288,7 @@ in {
                     if cfg.mail-private-key != null then "export MAIL_PRIVATE_KEY=\"$(cat ${cfg.mail-private-key})\"; " else ""
                     } ${
                     if cfg.mail-password != null then "export MAIL_PASSWORD=\"$(cat ${cfg.mail-password})\"; " else ""
-                    } export SECRET_KEY_BASE=\"$(cat ${cfg.secret-key-base})\"; export SIGNING_SALT=\"$(cat ${cfg.signing-salt})\"; export ENCRYPTION_SALT=\"$(cat ${cfg.encryption-salt})\"; exec -a ./bin/bonfire ./bin/bonfire start" ];
+                    } env; export SECRET_KEY_BASE=\"$(cat ${cfg.secret-key-base})\"; export SIGNING_SALT=\"$(cat ${cfg.signing-salt})\"; export ENCRYPTION_SALT=\"$(cat ${cfg.encryption-salt})\"; exec -a ./bin/bonfire ./bin/bonfire start" ];
           environment = {
             # DB settings
             POSTGRES_DB = "${cfg.postgres-db}";
