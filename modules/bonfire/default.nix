@@ -209,6 +209,7 @@ in {
     };
     mail-private-key = mkOption {
       type = with lib.types; nullOr path;
+      default = null;
       defaultText = "/run/secrets/bonfire/mail_key";
       description = ''
         MAIL_KEY Bonfire secret file path.
@@ -216,6 +217,7 @@ in {
     };
     mail-password = mkOption {
       type = with lib.types; nullOr path;
+      default = null;
       defaultText = "/run/secrets/bonfire/mail_password";
       description = ''
         MAIL_KEY Bonfire secret file path.
