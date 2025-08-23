@@ -179,6 +179,7 @@ in {
     # State options
     uploadsDir = mkOption {
       type = lib.types.path;
+      default = "/var/lib/bonfire";
       defaultText = "/var/lib/bonfire";
       description = ''
         The directory where Bonfire writes uploaded files.
