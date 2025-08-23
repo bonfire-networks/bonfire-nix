@@ -132,6 +132,13 @@ in {
         The MAIL_KEY variable.
       '';
     };
+    mail-backend = lib.mkOption {
+      type = with lib.types; nullOr str;
+      default = null;
+      description = ''
+        The MAIL_BACKEND variable.
+      '';
+    };
 
     # Web options
     hostname = lib.mkOption {
@@ -294,6 +301,7 @@ in {
           } // (if cfg.mail-domain != null then { MAIL_DOMAIN =  "${cfg.mail-domain}"; } else {}) //
           (if cfg.mail-from != null then { MAIL_FROM = "${cfg.mail-from}"; } else {}) //
           (if cfg.mail-backend != null then { MAIL_BACKEND = "${cfg.mail-backend}"; } else {}) //
+          (if cfg.mail-key != null then { MAIL_KEY = "${cfg.mail-key}"; } else {}) //
           (if cfg.mail-port != null then { MAIL_PORT = "${cfg.mail-port}"; } else {}) //
           (if cfg.mail-ssl != null then { MAIL_SSL = "${cfg.mail-ssl}"; } else {});
         };
