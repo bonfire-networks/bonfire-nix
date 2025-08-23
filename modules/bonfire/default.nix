@@ -60,6 +60,13 @@ in {
     };
 
     # DB options
+    postgres-host = lib.mkOption {
+      type = lib.types.str;
+      default = "localhost";
+      description = ''
+        The hostname where the Postgres db for Bonfire is running.
+      '';
+    };
     postgres-db = lib.mkOption {
       type = lib.types.str;
       default = "bonfire";
@@ -280,7 +287,7 @@ in {
             # DB settings
             POSTGRES_DB = "${cfg.postgres-db}";
             POSTGRES_USER = "${cfg.postgres-user}";
-            POSTGRES_HOST = "${postgres-host}";
+            POSTGRES_HOST = "${cfg.postgres-host}";
 
             # Instance settings
             SEARCH_MEILI_INSTANCE = "${cfg.meilisearch-instance}";
