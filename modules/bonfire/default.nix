@@ -291,9 +291,10 @@ in {
                     } env; export SECRET_KEY_BASE=\"$(cat ${cfg.secret-key-base})\"; export SIGNING_SALT=\"$(cat ${cfg.signing-salt})\"; export ENCRYPTION_SALT=\"$(cat ${cfg.encryption-salt})\"; exec -a ./bin/bonfire ./bin/bonfire start" ];
           environment = {
             # DB settings
-            POSTGRES_DB = "${cfg.postgres-db}";
-            POSTGRES_USER = "${cfg.postgres-user}";
-            POSTGRES_HOST = "${cfg.postgres-host}";
+            DATABASE_URL = "ecto://${cfg.postgres-user}@${cfg.postgres-host}/${cfg.postgres-db}";
+            # POSTGRES_DB = "${cfg.postgres-db}";
+            # POSTGRES_USER = "${cfg.postgres-user}";
+            # POSTGRES_HOST = "${cfg.postgres-host}";
 
             # Instance settings
             SEARCH_MEILI_INSTANCE = "${cfg.meilisearch-instance}";
