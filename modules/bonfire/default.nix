@@ -274,12 +274,6 @@ in {
             POSTGRES_DB = "${cfg.postgres-db}";
             POSTGRES_USER = "${cfg.postgres-user}";
             POSTGRES_HOST = "${postgres-host}";
-            # Mail settings
-            MAIL_DOMAIN = "${cfg.mail-domain}";
-            MAIL_FROM = "${cfg.mail-from}";
-            MAIL_BACKEND = "${cfg.mail-backend}";
-            MAIL_PORT = "${cfg.mail-port}";
-            MAIL_SSL = "${cfg.mail-ssl}";
 
             # Instance settings
             SEARCH_MEILI_INSTANCE = "${cfg.meilisearch-instance}";
@@ -295,8 +289,15 @@ in {
             PLUG_BACKEND = "bandit";
             APP_NAME = "Bonfire";
             ERLANG_COOKIE = "bonfire_cookie";
-          };
+
+            # Mail settings
+          } // (if cfg.mail-domain != null then { MAIL_DOMAIN =  "${cfg.mail-domain}"; } else {}) //
+          (if cfg.mail-from != null then { MAIL_FROM = "${cfg.mail-from}"; } else {}) //
+          (if cfg.mail-backend != null then { MAIL_BACKEND = "${cfg.mail-backend}"; } else {}) //
+          (if cfg.mail-port != null then { MAIL_PORT = "${cfg.mail-port}"; } else {}) //
+          (if cfg.mail-ssl != null then { MAIL_SSL = "${cfg.mail-ssl}"; } else {});
         };
+
         meilisearch = {
           image = "docker.io/getmeili/meilisearch:v1.14";
           networks = cfg.networks;
