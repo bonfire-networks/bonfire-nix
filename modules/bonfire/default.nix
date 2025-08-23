@@ -10,6 +10,7 @@ in {
     # it is used to declare configurable options.
 
     # OCI options
+    # FIXME: Allow changing OCI backend.
     backend = lib.mkOption {
       type = lib.types.str;
       default = "docker";
@@ -20,6 +21,9 @@ in {
     };
     networks = lib.mkOption {
       type = lib.types.listOf lib.types.str;
+      # We connect everything to the host network,
+      # this way we can use Nix provided services
+      # such as Postgres.
       default = [ "host" ];
       example = [ "host" ];
       description = ''
@@ -72,7 +76,7 @@ in {
     };
     postgres-package = lib.mkOption {
       type = lib.types.package;
-      default = pkgs.postgresql_15;
+      default = pkgs.postgresql_16;
       description = ''
         PostgreSQL package to use.
       '';
@@ -121,6 +125,13 @@ in {
         Whether to use SSL for the connection to the SMTP server.
       '';
     };
+    mail-key = lib.mkOption {
+      type = with lib.types; nullOr str;
+      default = null;
+      description = ''
+        The MAIL_KEY variable.
+      '';
+    };
 
     # Web options
     hostname = lib.mkOption {
@@ -131,7 +142,7 @@ in {
     };
     meilisearch-instance = lib.mkOption {
       type = with lib.types; nullOr str;
-      default = null;
+      default = "http://localhost:7700";
       description = ''
         The meilisearch instance used by Bonfire.
       '';
@@ -153,10 +164,57 @@ in {
 
     # State options
     uploadsDir = mkOption {
-      type = types.path;
+      type = lib.types.path;
       defaultText = "/var/lib/bonfire";
       description = ''
         The directory where Bonfire writes uploaded files.
+      '';
+    };
+
+    # Secrets
+    secret-key-base = mkOption {
+      type = lib.types.path;
+      defaultText = "/run/secrets/bonfire/secret_key_base";
+      description = ''
+         SECRET_KEY_BASE Bonfire secret file path.
+      '';
+    };
+    signing-salt = mkOption {
+      type = lib.types.path;
+      defaultText = "/run/secrets/bonfire/signing_salt";
+      description = ''
+        SIGNING_SALT Bonfire secret file path.
+      '';
+    };
+    encryption-salt = mkOption {
+      type = lib.types.path;
+      defaultText = "/run/secrets/bonfire/encryption_salt";
+      description = ''
+        ENCRYPTION_SALT Bonfire secret file path.
+      '';
+    };
+    mail-private-key = mkOption {
+      type = with lib.types; nullOr path;
+      defaultText = "/run/secrets/bonfire/mail_key";
+      description = ''
+        MAIL_KEY Bonfire secret file path.
+      '';
+    };
+    mail-password = mkOption {
+      type = with lib.types; nullOr path;
+      defaultText = "/run/secrets/bonfire/mail_password";
+      description = ''
+        MAIL_KEY Bonfire secret file path.
+      '';
+    };
+
+    # Systemd service
+    requires = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ "postgresql.service" "docker-meilisearch.service" ];
+      example = [ "postresql.service" "docker-meilisearch.service" ];
+      description = ''
+        The systemd dependencies of the Bonfire service.
       '';
     };
 
@@ -183,7 +241,9 @@ in {
         CREATE DATABASE ${cfg.postgres-db};
         GRANT ALL PRIVILEGES ON DATABASE ${cfg.postgres-db} TO ${cfg.postgres-user};
       '';
+      extraPlugins = ps: with ps; [ pkgs.postgis ];
     };
+
     virtualisation.docker = {
      enable = true;
     };
@@ -194,11 +254,21 @@ in {
       containers = {
         bonfire = {
           image = "${cfg.image}:${cfg.version}-${cfg.flavor}-${cfg.arch}";
-          # We connect everything to the host network,
-          # this way we can use Nix provides services
-          # such as Postgres.
           networks = cfg.networks;
-          volumes = [ "${cfg.uploadsDir}:/opt/app/data/uploads" ];
+          volumes = [
+            "${cfg.uploadsDir}:/opt/app/data/uploads"
+            "${cfg.secret-key-base}:${cfg.secret-key-base}:ro"
+            "${cfg.signing-salt}:${cfg.signing-salt}:ro"
+            "${cfg.encryption-salt}:${cfg.encryption-salt}:ro"
+          ] ++
+          (if cfg.mail-password != null then [ "${cfg.mail-password}:${cfg.mail-password}:ro" ] else []) ++
+          (if cfg.mail-private-key != null then [ "${cfg.mail-private-key}:${cfg.mail-private-key}:ro" ] else []);
+          entrypoint = "/bin/sh";
+          cmd = [ "${
+                    if cfg.mail-private-key != null then "export MAIL_PRIVATE_KEY=\"$(cat ${cfg.mail-private-key})\"; " else ""
+                    } ${
+                    if cfg.mail-password != null then "export MAIL_PASSWORD=\"$(cat ${cfg.mail-password})\"; " else ""
+                    } export SECRET_KEY_BASE=\"$(cat ${cfg.secret-key-base})\"; export SIGNING_SALT=\"$(cat ${cfg.signing-salt})\"; export ENCRYPTION_SALT=\"$(cat ${cfg.encryption-salt})\"; exec -a ./bin/bonfire ./bin/bonfire start" ];
           environment = {
             # DB settings
             POSTGRES_DB = "${cfg.postgres-db}";
@@ -227,7 +297,24 @@ in {
             ERLANG_COOKIE = "bonfire_cookie";
           };
         };
+        meilisearch = {
+          image = "docker.io/getmeili/meilisearch:v1.14";
+          networks = cfg.networks;
+          volumes = [
+            "/var/lib/meilisearch/meili_data:/meili_data"
+            "/var/lib/meilisearch/data.ms:/data.ms"
+          ];
+          environment = {
+            # Disable telemetry
+            MEILI_NO_ANALYTICS = "true";
+          };
+        };
       };
+    };
+
+    systemd.services.podman-nextcloud = {
+      requires = cfg.requires;
+      after = cfg.requires;
     };
   };
 }
