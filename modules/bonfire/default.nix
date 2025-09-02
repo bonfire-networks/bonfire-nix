@@ -338,7 +338,7 @@ in {
       };
     };
 
-    systemd.services.podman-nextcloud = {
+    systemd.services.docker-bonfire = {
       requires = cfg.requires;
       after = cfg.requires;
     };
