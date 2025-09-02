@@ -262,7 +262,7 @@ in {
         CREATE DATABASE ${cfg.postgres-db};
         GRANT ALL PRIVILEGES ON DATABASE ${cfg.postgres-db} TO ${cfg.postgres-user};
       '';
-      extraPlugins = ps: with ps; [ pkgs.postgis ];
+      extensions = ps: with ps; [ pkgs.postgis ];
     };
 
     virtualisation.docker = {
