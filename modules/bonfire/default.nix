@@ -233,7 +233,7 @@ in {
     requires = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ "postgresql.service" "docker-meilisearch.service" ];
-      example = [ "postresql.service" "docker-meilisearch.service" ];
+      example = [ "postgresql.service" "docker-meilisearch.service" ];
       description = ''
         The systemd dependencies of the Bonfire service.
       '';
