@@ -132,13 +132,6 @@ in {
         Whether to use SSL for the connection to the SMTP server.
       '';
     };
-    mail-key = lib.mkOption {
-      type = with lib.types; nullOr str;
-      default = null;
-      description = ''
-        The MAIL_KEY variable.
-      '';
-    };
     mail-backend = lib.mkOption {
       type = with lib.types; nullOr str;
       default = null;
@@ -211,12 +204,20 @@ in {
         ENCRYPTION_SALT Bonfire secret file path.
       '';
     };
-    mail-private-key = mkOption {
+    mail-key = mkOption {
       type = with lib.types; nullOr path;
       default = null;
       defaultText = "/run/secrets/bonfire/mail_key";
       description = ''
         MAIL_KEY Bonfire secret file path.
+      '';
+    };
+    mail-private-key = mkOption {
+      type = with lib.types; nullOr path;
+      default = null;
+      defaultText = "/run/secrets/bonfire/mail_private_key";
+      description = ''
+        MAIL_PRIVATE_KEY Bonfire secret file path.
       '';
     };
     mail-password = mkOption {
@@ -282,9 +283,12 @@ in {
             "${cfg.encryption-salt}:${cfg.encryption-salt}:ro"
           ] ++
           (if cfg.mail-password != null then [ "${cfg.mail-password}:${cfg.mail-password}:ro" ] else []) ++
+          (if cfg.mail-key != null then [ "${cfg.mail-key}:${cfg.mail-key}:ro" ] else []) ++
           (if cfg.mail-private-key != null then [ "${cfg.mail-private-key}:${cfg.mail-private-key}:ro" ] else []);
           entrypoint = "/bin/sh";
           cmd = [ "-c" "${
+                    if cfg.mail-key != null then "export MAIL_KEY=\"$(cat ${cfg.mail-key})\"; " else ""
+                    } ${
                     if cfg.mail-private-key != null then "export MAIL_PRIVATE_KEY=\"$(cat ${cfg.mail-private-key})\"; " else ""
                     } ${
                     if cfg.mail-password != null then "export MAIL_PASSWORD=\"$(cat ${cfg.mail-password})\"; " else ""
@@ -315,7 +319,6 @@ in {
           } // (if cfg.mail-domain != null then { MAIL_DOMAIN =  "${cfg.mail-domain}"; } else {}) //
           (if cfg.mail-from != null then { MAIL_FROM = "${cfg.mail-from}"; } else {}) //
           (if cfg.mail-backend != null then { MAIL_BACKEND = "${cfg.mail-backend}"; } else {}) //
-          (if cfg.mail-key != null then { MAIL_KEY = "${cfg.mail-key}"; } else {}) //
           (if cfg.mail-port != null then { MAIL_PORT = "${cfg.mail-port}"; } else {}) //
           (if cfg.mail-ssl != null then { MAIL_SSL = "${lib.trivial.boolToString cfg.mail-ssl}"; } else {});
         };
