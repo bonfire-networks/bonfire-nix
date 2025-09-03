@@ -238,6 +238,13 @@ in {
         The systemd dependencies of the Bonfire service.
       '';
     };
+    auto-start = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Whether to use auto start Bonfire at boot.
+      '';
+    };
 
   };
 
@@ -341,6 +348,6 @@ in {
     systemd.services.docker-bonfire = {
       requires = cfg.requires;
       after = cfg.requires;
-    };
+    } // (if cfg.auto-start then {} else { wantedBy = lib.mkForce [ ]; });
   };
 }
