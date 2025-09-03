@@ -275,7 +275,6 @@ in {
       initialScript = pkgs.writeText "backend-initScript" ''
         CREATE ROLE ${cfg.postgres-user} LOGIN CREATEDB;
         CREATE DATABASE ${cfg.postgres-db};
-        GRANT ALL PRIVILEGES ON SCHEMA public TO ${cfg.postgres-user};
         GRANT ALL PRIVILEGES ON DATABASE ${cfg.postgres-db} TO ${cfg.postgres-user};
       '';
       extensions = ps: with ps; [ pkgs.postgis ];
