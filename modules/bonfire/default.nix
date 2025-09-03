@@ -365,7 +365,7 @@ in {
         Type = "oneshot";
         User = "postgres";
       };
-      requiredBy = "docker-bonfire.service";
+      requiredBy = [ "docker-bonfire.service" ];
       after = ["postgresql.service"];
       path = [ cfg.postgres-db pkgs.gnused pkgs.replace-secret];
       serviceConfig = {
