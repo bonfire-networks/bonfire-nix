@@ -378,7 +378,7 @@ in {
     shopt -s inherit_errexit
     # Copy SQL template into temporary folder. The value of RuntimeDirectory is written into
     # environment variable RUNTIME_DIRECTORY by systemd.
-    install --mode 600 ${./db-name.sql} "''$RUNTIME_DIRECTORY/init.sql"
+    install --mode 600 ${./db-init.sql} "''$RUNTIME_DIRECTORY/init.sql"
     # fill SQL template with passwords
     sed -i "s/@DB_USER@/${cfg.postgres-user}/g" "''$RUNTIME_DIRECTORY/init.sql"
     replace-secret @DB_USER_PASSWORD@ "${cfg.postgres-password}" "''$RUNTIME_DIRECTORY/init.sql"
