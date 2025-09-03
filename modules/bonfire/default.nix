@@ -327,7 +327,7 @@ in {
           (if cfg.mail-from != null then { MAIL_FROM = "${cfg.mail-from}"; } else {}) //
           (if cfg.mail-backend != null then { MAIL_BACKEND = "${cfg.mail-backend}"; } else {}) //
           (if cfg.mail-port != null then { MAIL_PORT = "${cfg.mail-port}"; } else {}) //
-          (if cfg.mail-ssl != null then { MAIL_SSL = "${lib.trivial.boolToString cfg.mail-ssl}"; } else {});
+          (if cfg.mail-ssl then { MAIL_SSL = "${lib.trivial.boolToString cfg.mail-ssl}"; } else {});
         };
 
         meilisearch = {
