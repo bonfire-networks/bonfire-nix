@@ -248,7 +248,7 @@ in {
     };
     auto-start = lib.mkOption {
       type = lib.types.bool;
-      default = false;
+      default = true;
       description = ''
         Whether to use auto start Bonfire at boot.
       '';
