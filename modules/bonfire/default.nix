@@ -204,6 +204,14 @@ in {
         ENCRYPTION_SALT Bonfire secret file path.
       '';
     };
+    postgres-password = mkOption {
+      type = lib.types.path;
+      default = "/run/secrets/bonfire/postgres_password";
+      defaultText = "/run/secrets/bonfire/postgres_password";
+      description = ''
+         POSTGRES_PASSWORD Bonfire secret file path.
+      '';
+    };
     mail-key = mkOption {
       type = with lib.types; nullOr path;
       default = null;
@@ -288,6 +296,7 @@ in {
             "${cfg.secret-key-base}:${cfg.secret-key-base}:ro"
             "${cfg.signing-salt}:${cfg.signing-salt}:ro"
             "${cfg.encryption-salt}:${cfg.encryption-salt}:ro"
+            "${cfg.postgres-password}:${cfg.postgres-password}:ro"
           ] ++
           (if cfg.mail-password != null then [ "${cfg.mail-password}:${cfg.mail-password}:ro" ] else []) ++
           (if cfg.mail-key != null then [ "${cfg.mail-key}:${cfg.mail-key}:ro" ] else []) ++
@@ -299,13 +308,15 @@ in {
                     if cfg.mail-private-key != null then "export MAIL_PRIVATE_KEY=\"$(cat ${cfg.mail-private-key})\"; " else ""
                     } ${
                     if cfg.mail-password != null then "export MAIL_PASSWORD=\"$(cat ${cfg.mail-password})\"; " else ""
+                    } ${
+                    if cfg.postgres-password != null then "export POSTGRES_PASSWORD=\"$(cat ${cfg.postgres-password})\"; " else ""
                     } export SECRET_KEY_BASE=\"$(cat ${cfg.secret-key-base})\"; export SIGNING_SALT=\"$(cat ${cfg.signing-salt})\"; export ENCRYPTION_SALT=\"$(cat ${cfg.encryption-salt})\"; exec -a ./bin/bonfire ./bin/bonfire start" ];
           environment = {
             # DB settings
-            DATABASE_URL = "ecto://${cfg.postgres-user}@${cfg.postgres-host}/${cfg.postgres-db}";
-            # POSTGRES_DB = "${cfg.postgres-db}";
-            # POSTGRES_USER = "${cfg.postgres-user}";
-            # POSTGRES_HOST = "${cfg.postgres-host}";
+            # DATABASE_URL = "ecto://${cfg.postgres-user}@${cfg.postgres-host}/${cfg.postgres-db}";
+            POSTGRES_DB = "${cfg.postgres-db}";
+            POSTGRES_USER = "${cfg.postgres-user}";
+            POSTGRES_HOST = "${cfg.postgres-host}";
 
             # Instance settings
             SEARCH_MEILI_INSTANCE = "${cfg.meilisearch-instance}";
@@ -349,5 +360,31 @@ in {
       requires = cfg.requires;
       after = cfg.requires;
     } // (if cfg.auto-start then {} else { wantedBy = lib.mkForce [ ]; });
+    systemd.services."postgresql-declarative-db-setup" = {
+      serviceConfig = {
+        Type = "oneshot";
+        User = "postgres";
+      };
+      requiredBy = "docker-bonfire.service";
+      after = ["postgresql.service"];
+      path = [ cfg.postgres-db pkgs.gnused pkgs.replace-secret];
+      serviceConfig = {
+        RuntimeDirectory = "postgresql-setup";
+        RuntimeDirectoryMode = "700";
+      };
+      script = ''
+    # set bash options for early fail and error output
+    set -o errexit -o pipefail -o nounset -o errtrace -o xtrace
+    shopt -s inherit_errexit
+    # Copy SQL template into temporary folder. The value of RuntimeDirectory is written into
+    # environment variable RUNTIME_DIRECTORY by systemd.
+    install --mode 600 ${./db-name.sql} "''$RUNTIME_DIRECTORY/init.sql"
+    # fill SQL template with passwords
+    sed -i "s/@DB_USER@/${cfg.postgres-user}/g" "''$RUNTIME_DIRECTORY/init.sql"
+    replace-secret @DB_USER_PASSWORD@ "${cfg.postgres-password}" "''$RUNTIME_DIRECTORY/init.sql"
+    # run filled SQL template
+    psql ${cfg.postgres-db} --file "''$RUNTIME_DIRECTORY/init.sql"
+      '';
+    };
   };
 }
