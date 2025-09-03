@@ -62,7 +62,7 @@ in {
     # DB options
     postgres-host = lib.mkOption {
       type = lib.types.str;
-      default = "localhost";
+      default = "127.0.0.1";
       description = ''
         The hostname where the Postgres db for Bonfire is running.
       '';
