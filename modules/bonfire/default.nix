@@ -367,7 +367,7 @@ in {
       };
       requiredBy = [ "docker-bonfire.service" ];
       after = ["postgresql.service"];
-      path = [ cfg.postgres-db pkgs.gnused pkgs.replace-secret];
+      path = [ cfg.postgres-package pkgs.gnused pkgs.replace-secret];
       serviceConfig = {
         RuntimeDirectory = "postgresql-setup";
         RuntimeDirectoryMode = "700";
