@@ -233,7 +233,7 @@ in {
       default = null;
       defaultText = "/run/secrets/bonfire/mail_password";
       description = ''
-        MAIL_KEY Bonfire secret file path.
+        MAIL_PASSWORD Bonfire secret file path.
       '';
     };
 
