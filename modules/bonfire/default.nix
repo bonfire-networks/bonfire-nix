@@ -236,6 +236,14 @@ in {
         MAIL_PASSWORD Bonfire secret file path.
       '';
     };
+    meili-master-key = mkOption {
+      type = with lib.types; nullOr path;
+      default = null;
+      defaultText = "/run/secrets/bonfire/meili-master-key";
+      description = ''
+        MEILI_MASTER_KEY Bonfire secret file path.
+      '';
+    };
 
     # Systemd service
     requires = lib.mkOption {
@@ -298,6 +306,7 @@ in {
             "${cfg.encryption-salt}:${cfg.encryption-salt}:ro"
             "${cfg.postgres-password}:${cfg.postgres-password}:ro"
           ] ++
+          (if cfg.meili-master-key != null then [ "${cfg.meili-master-key}:${cfg.meili-master-key}:ro" ] else []) ++
           (if cfg.mail-password != null then [ "${cfg.mail-password}:${cfg.mail-password}:ro" ] else []) ++
           (if cfg.mail-key != null then [ "${cfg.mail-key}:${cfg.mail-key}:ro" ] else []) ++
           (if cfg.mail-private-key != null then [ "${cfg.mail-private-key}:${cfg.mail-private-key}:ro" ] else []);
@@ -308,6 +317,8 @@ in {
                     if cfg.mail-private-key != null then "export MAIL_PRIVATE_KEY=\"$(cat ${cfg.mail-private-key})\"; " else ""
                     } ${
                     if cfg.mail-password != null then "export MAIL_PASSWORD=\"$(cat ${cfg.mail-password})\"; " else ""
+                    } ${
+                    if cfg.meili-master-key != null then "export MEILI_MASTER_KEY=\"$(cat ${cfg.meili-master-key})\"; " else ""
                     } ${
                     if cfg.postgres-password != null then "export POSTGRES_PASSWORD=\"$(cat ${cfg.postgres-password})\"; " else ""
                     } export SECRET_KEY_BASE=\"$(cat ${cfg.secret-key-base})\"; export SIGNING_SALT=\"$(cat ${cfg.signing-salt})\"; export ENCRYPTION_SALT=\"$(cat ${cfg.encryption-salt})\"; exec -a ./bin/bonfire ./bin/bonfire start" ];
@@ -344,10 +355,15 @@ in {
         meilisearch = {
           image = "docker.io/getmeili/meilisearch:v1.14";
           networks = cfg.networks;
+          entrypoint = "/sbin/tini";
+          cmd = [ "--" "sh" "-c" "${
+            if cfg.meili-master-key != null then "export MEILI_MASTER_KEY=\"$(cat ${cfg.meili-master-key})\"; " else ""
+            } exec -a /bin/meilisearch /bin/meilisearch" ];
           volumes = [
             "/var/lib/meilisearch/meili_data:/meili_data"
             "/var/lib/meilisearch/data.ms:/data.ms"
-          ];
+          ] ++
+          (if cfg.meili-master-key != null then [ "${cfg.meili-master-key}:${cfg.meili-master-key}:ro" ] else []);
           environment = {
             # Disable telemetry
             MEILI_NO_ANALYTICS = "true";
