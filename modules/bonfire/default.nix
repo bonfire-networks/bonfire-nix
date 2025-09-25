@@ -154,6 +154,20 @@ in {
         The meilisearch instance used by Bonfire.
       '';
     };
+    meilisearch-image = lib.mkOption {
+      type = lib.types.str;
+      default = "docker.io/getmeili/meilisearch";
+      description = ''
+        The OCI image that will be used to run Meilisearch
+      '';
+    };
+    meilisearch-tag = lib.mkOption {
+      type = lib.types.str;
+      default = "latest";
+      description = ''
+        The tag of the OCI image that will be used to run Meilisearch
+      '';
+    };
     port = lib.mkOption {
       type = lib.types.str;
       default = "4000";
@@ -353,7 +367,7 @@ in {
         };
 
         meilisearch = {
-          image = "docker.io/getmeili/meilisearch:v1.14";
+          image = "${cfg.meilisearch-image}:${cfg.meilisearch-tag}";
           networks = cfg.networks;
           entrypoint = "/sbin/tini";
           cmd = [ "--" "sh" "-c" "${
