@@ -253,7 +253,7 @@ in {
     meili-master-key = mkOption {
       type = with lib.types; nullOr path;
       default = null;
-      defaultText = "/run/secrets/bonfire/meili-master-key";
+      defaultText = "/run/secrets/bonfire/meili_master_key";
       description = ''
         MEILI_MASTER_KEY Bonfire secret file path.
       '';
