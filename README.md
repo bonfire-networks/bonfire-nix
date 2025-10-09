@@ -4,7 +4,7 @@ A Nix flake providing NixOS modules for [Bonfire](https://bonfirenetworks.org/) 
 
 ## Usage
 
-The `bonfire-guix` flake contains a NixOS module to deploy Bonfire. Assuming you have NixOS with flakes installed on a server, in case you don't you can setup one easily with [`nixos-anywhere`](https://github.com/nix-community/nixos-anywhere), the following steps will allow you to have a working Bonfire instance.
+The `bonfire-nix` flake contains a NixOS module to deploy Bonfire. Assuming you have NixOS with flakes installed on a server, in case you don't you can setup one easily with [`nixos-anywhere`](https://github.com/nix-community/nixos-anywhere), the following steps will allow you to have a working Bonfire instance.
 
 ### 1. Add the `bonfire-nix` flake to your `flake.nix`
 
@@ -44,7 +44,7 @@ security.acme.defaults.email = "youremail@address.org";
 
 ### 3. Secrets
 
-The Bonfire module is able to load secrets stored as files, so you are free to choose whichever option you prefer to provision and rotate them. One option to provision secrets as files in a Guix aware way is [sops-nix](https://github.com/Mic92/sops-nix). You can refer to [`sops-guix`' tutorial for a more in depth explaination](https://github.com/Mic92/sops-nix/tree/master?tab=readme-ov-file#usage-example).
+The Bonfire module is able to load secrets stored as files, so you are free to choose whichever option you prefer to provision and rotate them. One option to provision secrets as files in a Nix aware way is [sops-nix](https://github.com/Mic92/sops-nix). You can refer to [`sops-nix`' tutorial for a more in depth explaination](https://github.com/Mic92/sops-nix/tree/master?tab=readme-ov-file#usage-example).
 
 #### `age` keys
 
