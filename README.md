@@ -88,14 +88,14 @@ You are now ready to create the [secrets you need](https://docs.bonfirenetworks.
 In this example the PostgreSQL password secret is being created, but other secrets are created the same way. You can generate a random string with:
 
 ```shell
-nix-shell -p openssl -- 'openssl rand -base64 32'
+nix-shell -p openssl --run 'openssl rand -base64 32'
 v/hSYQHNCJMYW+U8D3m6ADQ+5382jN9iJ69gfImEISY=
 ```
 
 From the same directory where the `.sops.yaml` and your configuration are stored, run the following command to create a `yoursystem.yaml` file that will store your encrypted secrets. Unencrypted secrets are supposed to never hit the disk, check out `sops-nix` README for more information.
 
 ```bash
-nix-shell -p sops -- 'sops yoursystem.yaml'
+nix-shell -p sops --run 'sops yoursystem.yaml'
 ```
 
 Your default editor will pop up. Replace the SOPS example secrets and add the following content to the file:
