@@ -31,7 +31,7 @@ It is sufficient to add `bonfire-nix` to your Flake's inputs and the NixOS modul
 }
 ```
 
-Then run `nix flake lock.`
+Then run `nix flake lock`.
 
 ### 2. Setup SSL certificates
 
