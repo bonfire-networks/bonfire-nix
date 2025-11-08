@@ -258,6 +258,38 @@ in {
         MEILI_MASTER_KEY Bonfire secret file path.
       '';
     };
+    zenodo-client-id = mkOption {
+      type = with lib.types; nullOr path;
+      default = null;
+      defaultText = "/run/secrets/bonfire/zenodo_client_id";
+      description = ''
+        ZENODO_CLIENT_ID Bonfire secret file path.
+      '';
+    };
+    zenodo-client-secret = mkOption {
+      type = with lib.types; nullOr path;
+      default = null;
+      defaultText = "/run/secrets/bonfire/zenodo_client_secret";
+      description = ''
+        ZENODO_CLIENT_SECRET Bonfire secret file path.
+      '';
+    };
+    orcid-client-id = mkOption {
+      type = with lib.types; nullOr path;
+      default = null;
+      defaultText = "/run/secrets/bonfire/orcid-client-id";
+      description = ''
+        ORCID_CLIENT_ID Bonfire secret file path.
+      '';
+    };
+    orcid-client-secret = mkOption {
+      type = with lib.types; nullOr path;
+      default = null;
+      defaultText = "/run/secrets/bonfire/orcid_client_secret";
+      description = ''
+        ORCID_CLIENT_SECRET Bonfire secret file path.
+      '';
+    };
 
     # Systemd service
     requires = lib.mkOption {
@@ -323,7 +355,11 @@ in {
           (if cfg.meili-master-key != null then [ "${cfg.meili-master-key}:${cfg.meili-master-key}:ro" ] else []) ++
           (if cfg.mail-password != null then [ "${cfg.mail-password}:${cfg.mail-password}:ro" ] else []) ++
           (if cfg.mail-key != null then [ "${cfg.mail-key}:${cfg.mail-key}:ro" ] else []) ++
-          (if cfg.mail-private-key != null then [ "${cfg.mail-private-key}:${cfg.mail-private-key}:ro" ] else []);
+          (if cfg.mail-private-key != null then [ "${cfg.mail-private-key}:${cfg.mail-private-key}:ro" ] else []) ++
+          (if cfg.zenodo-client-id != null then [ "${cfg.zenodo-client-id}:${cfg.zenodo-client-id}:ro" ] else []) ++
+          (if cfg.zenodo-client-secret != null then [ "${cfg.zenodo-client-secret}:${cfg.zenodo-client-secret}:ro" ] else []) ++
+          (if cfg.orcid-client-id != null then [ "${cfg.orcid-client-id}:${cfg.orcid-client-id}:ro" ] else []) ++
+          (if cfg.orcid-client-secret != null then [ "${cfg.orcid-client-secret}:${cfg.orcid-client-secret}:ro" ] else []);
           entrypoint = "/bin/sh";
           cmd = [ "-c" "${
                     if cfg.mail-key != null then "export MAIL_KEY=\"$(cat ${cfg.mail-key})\"; " else ""
@@ -335,6 +371,14 @@ in {
                     if cfg.meili-master-key != null then "export MEILI_MASTER_KEY=\"$(cat ${cfg.meili-master-key})\"; " else ""
                     } ${
                     if cfg.postgres-password != null then "export POSTGRES_PASSWORD=\"$(cat ${cfg.postgres-password})\"; " else ""
+                    } ${
+                    if cfg.zenodo-client-id != null then "export ZENODO_CLIENT_ID=\"$(cat ${cfg.zenodo-client-id})\"; " else ""
+                    } ${
+                    if cfg.zenodo-client-secret != null then "export ZENODO_CLIENT_SECRET=\"$(cat ${cfg.zenodo-client-secret})\"; " else ""
+                    } ${
+                    if cfg.orcid-client-id != null then "export ORCID_CLIENT_ID=\"$(cat ${cfg.orcid-client-id})\"; " else ""
+                    } ${
+                    if cfg.orcid-client-secret != null then "export ORCID_CLIENT_SECRET=\"$(cat ${cfg.orcid-client-secret})\"; " else ""
                     } export SECRET_KEY_BASE=\"$(cat ${cfg.secret-key-base})\"; export SIGNING_SALT=\"$(cat ${cfg.signing-salt})\"; export ENCRYPTION_SALT=\"$(cat ${cfg.encryption-salt})\"; exec -a ./bin/bonfire ./bin/bonfire start" ];
           environment = {
             # DB settings
