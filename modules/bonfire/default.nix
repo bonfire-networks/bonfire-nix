@@ -291,6 +291,29 @@ in {
       '';
     };
 
+    # Open Science flavor configuration
+    zenodo-env = mkOption {
+      type = with lib.types; nullOr str;
+      default = null;
+      description = ''
+        ZENODO_ENV variable, set to sandbox to use Zenodo's sandbox API.
+      '';
+    };
+    orcid-env = mkOption {
+      type = with lib.types; nullOr str;
+      default = null;
+      description = ''
+        ORCID_ENV variable, set to sandbox to use ORCID's sandbox API.
+      '';
+    };
+    orcid-with-member-api = mkOption {
+      type = with lib.types; nullOr str;
+      default = null;
+      description = ''
+        ORCID_WITH_MEMBER_API variable, set to yes if your organisation (used to create these API keys) is an ORCID member.
+      '';
+    };
+
     # Systemd service
     requires = lib.mkOption {
       type = lib.types.listOf lib.types.str;
@@ -407,7 +430,10 @@ in {
           (if cfg.mail-from != null then { MAIL_FROM = "${cfg.mail-from}"; } else {}) //
           (if cfg.mail-backend != null then { MAIL_BACKEND = "${cfg.mail-backend}"; } else {}) //
           (if cfg.mail-port != null then { MAIL_PORT = "${cfg.mail-port}"; } else {}) //
-          (if cfg.mail-ssl then { MAIL_SSL = "${lib.trivial.boolToString cfg.mail-ssl}"; } else {});
+          (if cfg.mail-ssl then { MAIL_SSL = "${lib.trivial.boolToString cfg.mail-ssl}"; } else {}) //
+          (if cfg.zenodo_env then { ZENODO_ENV = "${cfg.zenodo-env}"; } else {}) //
+          (if cfg.orcid-env then { ORCID_ENV = "${cfg.orcid-env}"; } else {}) //
+          (if cfg.orcid-with-member-api then { ORCID_WITH_MEMBER_API = "${cfg.orcid-with-member-api}"; } else {});
         };
 
         meilisearch = {
